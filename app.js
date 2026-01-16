@@ -1,8 +1,7 @@
-// Telegram init
 const tg = window.Telegram?.WebApp;
 if (tg) { tg.expand(); tg.ready(); }
 
-// Translations
+// ترجمه‌ها
 const translations = {
   fa: {
     title: "صرافی استارز ↔ TON",
@@ -64,11 +63,11 @@ const translations = {
   }
 };
 
-// Detect user language
+// زبان کاربر
 let userLang = tg?.initDataUnsafe?.user?.language_code || "fa";
 if (!translations[userLang]) userLang = "en";
 
-// State
+// وضعیت
 const state = {
   feePercent: 2.5,
   rateTonPerStar: 0.0005,
@@ -79,7 +78,7 @@ const state = {
   lang: userLang
 };
 
-// Elements
+// المنت‌ها
 const els = {
   appTitle: document.getElementById("appTitle"),
   panelTitle: document.getElementById("panelTitle"),
@@ -110,7 +109,7 @@ const els = {
   policyClose: document.getElementById("policyClose")
 };
 
-// Apply translations
+// اعمال ترجمه
 function applyTranslations(lang) {
   const t = translations[lang];
   document.title = t.title;
@@ -134,7 +133,6 @@ function applyTranslations(lang) {
   els.policyBody.textContent = t.policyBody;
   els.policyClose.textContent = t.close;
 
-  // Direction switch
   if (lang === "fa") {
     document.body.classList.remove("ltr");
     document.body.setAttribute("dir", "rtl");
@@ -144,42 +142,37 @@ function applyTranslations(lang) {
   }
 }
 
-// Show Telegram user name
+// نام کاربر
 try {
   const name = tg?.initDataUnsafe?.user?.first_name || (state.lang === "fa" ? "کاربر مهمان" : "Guest");
   els.userName.textContent = name;
 } catch {}
 
-// Render rate
+// نرخ
 function renderRate() {
   els.feeText.textContent = `${state.feePercent}%`;
   els.rateText.textContent = `1 Stars ≈ ${state.rateTonPerStar.toFixed(6)} TON`;
   els.lastUpdated.textContent = state.lastUpdated ? new Date(state.lastUpdated).toLocaleString(state.lang === "fa" ? "fa-IR" : "en-US") : "—";
 }
 
-// Estimate
+// تخمین
 function updateEstimate() {
   const amt = Number(els.amount.value || 0);
   const ton = (amt * state.rateTonPerStar).toFixed(6);
   els.estTon.textContent = ton;
 }
 
-// Fetch live rate
+// نرخ لحظه‌ای
 async function fetchRate() {
   try {
     const res = await fetch("https://tonapi.io/v2/rates?tokens=ton");
     const data = await res.json();
     const tonUsd = data?.rates?.TON?.prices?.USD || 2.0;
-
-    // Example baseline for Stars price in USD; adjust when you have a real source
-    const starsUsd = 0.001;
-
+    const starsUsd = 0.001; // نرخ پایه استارز به دلار (مثال)
     const rawTonPerStar = starsUsd / tonUsd;
     const afterFee = rawTonPerStar * (1 - state.feePercent / 100);
-
     state.rateTonPerStar = afterFee;
     state.lastUpdated = Date.now();
-
     renderRate();
     updateEstimate();
   } catch (e) {
@@ -190,7 +183,7 @@ async function fetchRate() {
   }
 }
 
-// Orders
+// سفارش
 function addOrderLocal(order) {
   state.orders.unshift(order);
   document.getElementById("orders").innerHTML = state.orders.map(o => `
@@ -211,63 +204,3 @@ function sendOrder(type) {
     estTon: Number(els.estTon.textContent),
     wallet: state.wallet,
     ts: Date.now()
-  };
-
-  const confirmText = state.lang === "fa"
-    ? `تأیید ${type.toUpperCase()}:\nمقدار: ${payload.amount} استارز\nتخمین TON (بعد از کارمزد): ${payload.estTon}\nکیف پول: ${payload.wallet || "متصل نیست"}`
-    : `Confirm ${type.toUpperCase()}:\nAmount: ${payload.amount} Stars\nEstimated TON (after fee): ${payload.estTon}\nWallet: ${payload.wallet || "Not connected"}`;
-
-  if (!confirm(confirmText)) return;
-
-  if (tg) tg.sendData(JSON.stringify(payload));
-  addOrderLocal(payload);
-}
-
-// Wallet connect via TonConnect
-async function connectWallet() {
-  try {
-    if (!state.connector) {
-      state.connector = new TonConnect({
-        manifestUrl: "https://temorsarr.github.io/stars-miniapp/tonconnect-manifest.json"
-      });
-    }
-    await state.connector.restoreConnection();
-    const result = await state.connector.connect();
-    state.wallet = result?.account?.address || null;
-    els.walletStatus.textContent = state.wallet
-      ? `${translations[state.lang].walletYes} ${state.wallet}`
-      : translations[state.lang].walletNot;
-  } catch (e) {
-    alert(state.lang === "fa" ? "اتصال کیف پول ناموفق بود" : "Wallet connection failed");
-  }
-}
-
-// Policy modal
-function openPolicy() {
-  els.policyModal.classList.remove("hidden");
-}
-function closePolicy() {
-  els.policyModal.classList.add("hidden");
-}
-
-// Events
-els.amount.addEventListener("input", updateEstimate);
-els.btnBuy.addEventListener("click", () => sendOrder("buy"));
-els.btnSell.addEventListener("click", () => sendOrder("sell"));
-els.btnConnect.addEventListener("click", connectWallet);
-els.btnPolicy.addEventListener("click", openPolicy);
-els.policyClose.addEventListener("click", closePolicy);
-els.langSelect.addEventListener("change", (e) => {
-  state.lang = e.target.value;
-  applyTranslations(state.lang);
-  renderRate();
-  updateEstimate();
-});
-
-// Init
-applyTranslations(state.lang);
-els.langSelect.value = state.lang;
-renderRate();
-updateEstimate();
-fetchRate();
-setInterval(fetchRate, 60000);
