@@ -5,37 +5,55 @@
   <title>Stars ↔ TON Exchange</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    body { font-family: system-ui, sans-serif; background:#0f1220; color:#fff; margin:0; padding:20px; text-align:center; }
-    .card { max-width:520px; margin:0 auto; background:#171a2b; border-radius:14px; padding:20px; box-shadow:0 10px 30px rgba(0,0,0,0.3); }
-    h2 { margin-top:0; }
-    .row { display:flex; gap:12px; margin-top:16px; }
-    button { flex:1; padding:14px; border:none; border-radius:10px; font-weight:600; cursor:pointer; }
-    .buy { background:#2ecc71; color:#0b1a12; }
-    .sell { background:#e67e22; color:#1a0f08; }
-    .note { font-size:13px; opacity:0.8; margin-top:12px; }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="card">
-    <h2>Stars ↔ TON Exchange</h2>
-    <p>یک گزینه انتخاب کنید:</p>
-    <div class="row">
-      <button class="buy" onclick="sendAction('buy')">🛒 خرید Stars</button>
-      <button class="sell" onclick="sendAction('sell')">💰 فروش Stars</button>
+  <header class="topbar">
+    <div class="brand">
+      <img src="assets/logo.png" alt="Logo" class="logo" />
+      <span>Stars ↔ TON</span>
     </div>
-    <p class="note">امن • سریع • شفاف</p>
-  </div>
+    <div class="status">
+      <span id="userName">Guest</span>
+    </div>
+  </header>
 
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
-    tg.ready();
+  <main class="container">
+    <section class="card">
+      <h2>Exchange panel</h2>
+      <div class="rate">
+        <span>Rate:</span>
+        <strong id="rateText">Loading…</strong>
+      </div>
 
-    function sendAction(type) {
-      tg.sendData(JSON.stringify({ action: type, ts: Date.now() }));
-      tg.close();
-    }
-  </script>
+      <div class="form">
+        <label>Amount</label>
+        <input id="amount" type="number" min="1" placeholder="Enter Stars amount" />
+        <div class="calc">
+          <span>Estimated TON:</span>
+          <strong id="estTon">0</strong>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="buy" id="btnBuy">Buy Stars</button>
+        <button class="sell" id="btnSell">Sell Stars</button>
+      </div>
+
+      <p class="note">Secure • Fast • Transparent</p>
+    </section>
+
+    <section class="card secondary">
+      <h3>Order history</h3>
+      <ul id="orders"></ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <button class="support" id="btnSupport">Support</button>
+    <button class="policy" id="btnPolicy">Policy</button>
+  </footer>
+
+  <script src="app.js"></script>
 </body>
 </html>
