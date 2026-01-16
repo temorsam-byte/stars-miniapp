@@ -1,74 +1,64 @@
 const tg = window.Telegram?.WebApp;
 if (tg) { tg.expand(); tg.ready(); }
 
+// ترجمه‌ها
+const translations = {
+  fa: {
+    title: "صرافی استارز ↔ TON",
+    panel: "پنل تبادل",
+    rate: "نرخ لحظه‌ای:",
+    amount: "مقدار (استارز)",
+    estTon: "تخمین TON (بعد از کارمزد):",
+    fee: "کارمزد:",
+    lastUpdated: "آخرین بروزرسانی:",
+    buy: "خرید استارز",
+    sell: "فروش استارز",
+    connect: "🔗 اتصال کیف پول",
+    walletNot: "کیف پول متصل نیست",
+    walletYes: "کیف پول متصل شد:",
+    history: "تاریخچه سفارش‌ها",
+    support: "پشتیبانی",
+    policy: "سیاست‌ها",
+    note: "امن • سریع • شفاف"
+  },
+  en: {
+    title: "Stars ↔ TON Exchange",
+    panel: "Exchange Panel",
+    rate: "Live Rate:",
+    amount: "Amount (Stars)",
+    estTon: "Estimated TON (after fee):",
+    fee: "Fee:",
+    lastUpdated: "Last updated:",
+    buy: "Buy Stars",
+    sell: "Sell Stars",
+    connect: "🔗 Connect Wallet",
+    walletNot: "Wallet not connected",
+    walletYes: "Wallet connected:",
+    history: "Order History",
+    support: "Support",
+    policy: "Policy",
+    note: "Secure • Fast • Transparent"
+  }
+};
+
+let userLang = tg?.initDataUnsafe?.user?.language_code || "fa";
+if (!translations[userLang]) userLang = "en";
+
+// وضعیت
 const state = {
-  rate: 0.0005, // نمونه: هر 1 Stars = 0.0005 TON (بعداً از API می‌آد)
-  orders: []
+  feePercent: 2.5,
+  rateTonPerStar: 0.0005,
+  lastUpdated: null,
+  orders: [],
+  wallet: null,
+  connector: null,
+  lang: userLang
 };
 
+// المنت‌ها
 const els = {
-  rateText: document.getElementById('rateText'),
-  amount: document.getElementById('amount'),
-  estTon: document.getElementById('estTon'),
-  btnBuy: document.getElementById('btnBuy'),
-  btnSell: document.getElementById('btnSell'),
-  orders: document.getElementById('orders'),
-  userName: document.getElementById('userName'),
-  btnSupport: document.getElementById('btnSupport'),
-  btnPolicy: document.getElementById('btnPolicy')
-};
-
-// نمایش نام کاربر تلگرام
-try {
-  const name = tg?.initDataUnsafe?.user?.first_name || 'Guest';
-  els.userName.textContent = name;
-} catch {}
-
-// نمایش نرخ
-function renderRate() {
-  els.rateText.textContent = `1 Stars = ${state.rate} TON`;
-}
-renderRate();
-
-// محاسبه تخمینی
-function updateEstimate() {
-  const amt = Number(els.amount.value || 0);
-  const ton = (amt * state.rate).toFixed(6);
-  els.estTon.textContent = ton;
-}
-els.amount.addEventListener('input', updateEstimate);
-
-// ارسال سفارش به ربات
-function sendOrder(type) {
-  const amt = Number(els.amount.value || 0);
-  if (!amt || amt <= 0) {
-    alert('Please enter a valid amount.');
-    return;
-  }
-  const payload = { action: type, amount: amt, estTon: Number(els.estTon.textContent), ts: Date.now() };
-  if (tg) {
-    tg.sendData(JSON.stringify(payload));
-  }
-  addOrderLocal(payload);
-}
-els.btnBuy.addEventListener('click', () => sendOrder('buy'));
-els.btnSell.addEventListener('click', () => sendOrder('sell'));
-
-// تاریخچه محلی برای نمایش
-function addOrderLocal(order) {
-  state.orders.unshift(order);
-  renderOrders();
-}
-function renderOrders() {
-  els.orders.innerHTML = state.orders.map(o => `
-    <li>
-      <span>${o.action.toUpperCase()} • ${o.amount} Stars</span>
-      <strong>${o.estTon} TON</strong>
-    </li>
-  `).join('');
-}
-renderOrders();
-
-// پشتیبانی و سیاست‌ها
-els.btnSupport.addEventListener('click', () => alert('Support: @TonStarExchange_support'));
-els.btnPolicy.addEventListener('click', () => alert('Policy: Transparent fees, secure processing.'));
+  appTitle: document.getElementById("appTitle"),
+  panelTitle: document.getElementById("panelTitle"),
+  rateLabel: document.getElementById("rateLabel"),
+  amountLabel: document.getElementById("amountLabel"),
+  estTonLabel: document.getElementById
