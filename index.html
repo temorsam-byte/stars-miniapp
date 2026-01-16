@@ -56,7 +56,7 @@
       </div>
 
       <div class="lang-select">
-        <label for="lang">🌐 زبان:</label>
+        <label for="lang" id="langLabel">🌐 زبان:</label>
         <select id="lang">
           <option value="fa">فارسی</option>
           <option value="en">English</option>
@@ -77,6 +77,15 @@
     <button class="policy" id="btnPolicy">سیاست‌ها</button>
   </footer>
 
+  <!-- مودال سیاست‌ها -->
+  <div id="policyModal" class="modal hidden">
+    <div class="modal-content">
+      <h4 id="policyTitle">سیاست‌ها</h4>
+      <div id="policyBody"></div>
+      <button id="policyClose">بستن</button>
+    </div>
+  </div>
+
   <script src="app.js"></script>
 </body>
-  </html>
+</html>
