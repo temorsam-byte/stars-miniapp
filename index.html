@@ -1,33 +1,38 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 <head>
   <meta charset="utf-8" />
   <title>صرافی Stars ↔ TON</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Telegram WebApp SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://unpkg.com/@tonconnect/sdk@latest"></script>
+  <!-- TonConnect UI -->
+  <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!-- Header -->
   <header class="topbar">
     <div class="brand">
       <img src="assets/logo.png" alt="Logo" class="logo" />
       <span id="appTitle">صرافی Stars ↔ TON</span>
     </div>
+
     <div class="lang-select">
-      <label for="lang" id="langLabel">🌐 زبان:</label>
-      <select id="lang">
+      <label for="lang" id="langLabel">زبان</label>
+      <select id="lang" aria-label="Language">
         <option value="fa">فارسی</option>
         <option value="en">English</option>
-        <option value="ar">العربية</option>
         <option value="ru">Русский</option>
       </select>
     </div>
+
     <div class="status">
-      <span id="userName">کاربر مهمان</span>
+      <span id="walletStatus">کیف پول متصل نیست</span>
     </div>
   </header>
 
+  <!-- Main -->
   <main class="container">
     <section class="card">
       <h2 id="panelTitle">پنل تبادل</h2>
@@ -38,16 +43,19 @@
       </div>
 
       <div class="form">
-        <label id="amountLabel">مقدار (Stars)</label>
-        <input id="amount" type="number" min="1" placeholder="مقدار را وارد کنید" />
+        <label id="amountLabel" for="amount">مقدار (Stars)</label>
+        <input id="amount" type="number" min="1" step="1" placeholder="مقدار را وارد کنید" />
+
         <div class="calc">
           <span id="estTonLabel">تخمین TON (بعد از کارمزد):</span>
           <strong id="estTon">0</strong>
         </div>
+
         <div class="calc">
           <span id="feeLabel">کارمزد:</span>
           <strong id="feeText">۲.۵٪</strong>
         </div>
+
         <div class="calc">
           <span id="lastUpdatedLabel">آخرین بروزرسانی:</span>
           <strong id="lastUpdated">—</strong>
@@ -60,8 +68,7 @@
       </div>
 
       <div class="wallet">
-        <button id="btnConnect">🔗 اتصال کیف پول</button>
-        <span id="walletStatus">کیف پول متصل نیست</span>
+        <div id="tonconnect-ui"></div>
       </div>
 
       <p class="note" id="noteText">امن • سریع • شفاف</p>
@@ -69,19 +76,20 @@
 
     <section class="card secondary">
       <h3 id="historyTitle">تاریخچه سفارش‌ها</h3>
-      <ul id="orders"></ul>
+      <ul id="orders" class="orders"></ul>
     </section>
 
     <section class="card secondary">
       <h3 id="aboutTitle">درباره ما</h3>
       <p id="aboutText">
-        صرافی Stars ↔ TON با هدف ایجاد پلی امن و سریع بین دنیای سرگرمی و بلاک‌چین ساخته شده است. 
-        ما با استفاده از فناوری‌های روز و امنیت بالا، تجربه‌ای شفاف و قابل اعتماد برای کاربران فراهم می‌کنیم. 
+        صرافی Stars ↔ TON با هدف ایجاد پلی امن و سریع بین دنیای سرگرمی و بلاک‌چین ساخته شده است.
+        ما با استفاده از فناوری‌های روز و امنیت بالا، تجربه‌ای شفاف و قابل اعتماد برای کاربران فراهم می‌کنیم.
         تیم ما متعهد است بهترین نرخ‌ها و پشتیبانی حرفه‌ای را در اختیار شما قرار دهد.
       </p>
     </section>
   </main>
 
+  <!-- Footer -->
   <footer class="footer">
     <a href="https://t.me/TonStarExchange_support" target="_blank" class="support" id="supportBtn">پشتیبانی</a>
     <button class="policy" id="btnPolicy">سیاست‌ها</button>
