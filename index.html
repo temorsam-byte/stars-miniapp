@@ -1,46 +1,120 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>TonStarExchange</title>
-
+  <meta charset="utf-8" />
+  <title>صرافی استارز ↔ TON</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="styles.css">
+  <script src="https://unpkg.com/@tonconnect/sdk@latest"></script>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
+  <header class="topbar">
+    <div class="brand">
+      <img src="assets/logo.png" alt="Logo" class="logo" />
+      <span id="appTitle">صرافی استارز ↔ TON</span>
+    </div>
+    <div class="status">
+      <span id="userName">کاربر مهمان</span>
+    </div>
+  </header>
 
-<header>
-  <h2 id="title"></h2>
+  <main class="container">
+    <section class="card">
+      <h2 id="panelTitle">پنل تبادل</h2>
 
-  <select id="lang">
-    <option value="fa">FA</option>
-    <option value="en">EN</option>
-    <option value="ar">AR</option>
-    <option value="ru">RU</option>
-  </select>
-</header>
+      <div class="rate">
+        <span id="rateLabel">نرخ لحظه‌ای:</span>
+        <strong id="rateText">در حال بارگذاری…</strong>
+      </div>
 
-<div class="card">
-  <label id="typeLabel"></label>
-  <select id="type">
-    <option value="BUY" id="buyText"></option>
-    <option value="SELL" id="sellText"></option>
-  </select>
+      <div class="form">
+        <label id="amountLabel">مقدار (استارز)</label>
+        <input id="amount" type="number" min="1" placeholder="مقدار را وارد کنید" />
+        <div class="calc">
+          <span id="estTonLabel">تخمین TON (بعد از کارمزد):</span>
+          <strong id="estTon">0</strong>
+        </div>
+        <div class="calc">
+          <span id="feeLabel">کارمزد:</span>
+          <strong id="feeText">۲.۵٪</strong>
+        </div>
+        <div class="calc">
+          <span id="lastUpdatedLabel">آخرین بروزرسانی:</span>
+          <strong id="lastUpdated">—</strong>
+        </div>
+      </div>
 
-  <label id="amountLabel"></label>
-  <input id="amount" type="number" placeholder="">
+      <div class="actions">
+        <button class="buy" id="btnBuy">خرید استارز</button>
+        <button class="sell" id="btnSell">فروش استارز</button>
+      </div>
 
-  <button id="submit"></button>
-</div>
+      <div class="wallet">
+        <button id="btnConnect">🔗 اتصال کیف پول</button>
+        <span id="walletStatus">کیف پول متصل نیست</span>
+      </div>
 
-<div id="receipt" class="card"></div>
+      <div class="lang-select">
+        <label for="lang" id="langLabel">🌐 زبان:</label>
+        <select id="lang">
+          <option value="fa">فارسی</option>
+          <option value="en">English</option>
+          <option value="ar">العربية</option>
+          <option value="ru">Русский</option>
+        </select>
+      </div>
 
-<footer>
-  <button id="policyBtn"></button>
-</footer>
+      <div class="settings">
+        <h4 id="settingsTitle">تنظیمات</h4>
+        <div class="calc">
+          <span id="feeSettingLabel">کارمزد (٪):</span>
+          <input id="feeSetting" type="number" min="0" max="10" step="0.1" value="2.5" />
+        </div>
+        <div class="calc">
+          <span id="starsUsdLabel">قیمت پایه استارز (USD):</span>
+          <input id="starsUsd" type="number" min="0" step="0.0001" value="0.001" />
+        </div>
+        <button id="saveSettings">ذخیره تنظیمات</button>
+      </div>
 
-<script src="app.js"></script>
+      <p class="note" id="noteText">امن • سریع • شفاف</p>
+    </section>
+
+    <section class="card secondary">
+      <h3 id="historyTitle">تاریخچه سفارش‌ها</h3>
+      <ul id="orders"></ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <a href="https://t.me/TonStarExchange_support" target="_blank" class="support" id="supportBtn">پشتیبانی</a>
+    <button class="policy" id="btnPolicy">سیاست‌ها</button>
+    <a href="#" id="aboutLink">درباره ما</a>
+    <a href="#" id="contactLink">تماس با ما</a>
+  </footer>
+
+  <!-- Policy modal -->
+  <div id="policyModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="policyTitle">
+    <div class="modal-content">
+      <h4 id="policyTitle">سیاست‌ها</h4>
+      <div id="policyBody" class="modal-body"></div>
+      <button id="policyClose">بستن</button>
+    </div>
+  </div>
+
+  <!-- Receipt modal -->
+  <div id="receiptModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="receiptTitle">
+    <div class="modal-content">
+      <h4 id="receiptTitle">رسید سفارش</h4>
+      <div id="receiptBody" class="modal-body"></div>
+      <div class="receipt-actions">
+        <button id="copyReceipt">کپی جزئیات</button>
+        <button id="receiptClose">بستن</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
