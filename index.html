@@ -1,49 +1,46 @@
 <!DOCTYPE html>
-<html>
+<html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Stars ↔ TON</title>
+  <title>TonStarExchange</title>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-  <header>
-    <h2 data-i18n="title"></h2>
 
-    <select id="langSelect">
-      <option value="fa">FA</option>
-      <option value="en">EN</option>
-      <option value="ar">AR</option>
-      <option value="ru">RU</option>
-    </select>
-  </header>
+<header>
+  <h2 id="title"></h2>
 
-  <section>
-    <button id="walletBtn" data-i18n="connect"></button>
-    <div id="walletAddress"></div>
-  </section>
+  <select id="lang">
+    <option value="fa">FA</option>
+    <option value="en">EN</option>
+    <option value="ar">AR</option>
+    <option value="ru">RU</option>
+  </select>
+</header>
 
-  <section>
-    <select id="type">
-      <option value="BUY" data-i18n="buy"></option>
-      <option value="SELL" data-i18n="sell"></option>
-    </select>
+<div class="card">
+  <label id="typeLabel"></label>
+  <select id="type">
+    <option value="BUY" id="buyText"></option>
+    <option value="SELL" id="sellText"></option>
+  </select>
 
-    <input id="amount" type="number" data-i18n-placeholder="amount">
-    <button id="submit" data-i18n="submit"></button>
-  </section>
+  <label id="amountLabel"></label>
+  <input id="amount" type="number" placeholder="">
 
-  <section id="receipt"></section>
+  <button id="submit"></button>
+</div>
 
-  <footer>
-    <button data-i18n="about"></button>
-    <button data-i18n="contact"></button>
-    <button id="policyBtn" data-i18n="policy"></button>
-  </footer>
+<div id="receipt" class="card"></div>
 
-  <script type="module" src="app.js"></script>
+<footer>
+  <button id="policyBtn"></button>
+</footer>
+
+<script src="app.js"></script>
 </body>
 </html>
